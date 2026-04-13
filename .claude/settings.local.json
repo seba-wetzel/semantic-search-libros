@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -si https://semantic-search-libros.vercel.app/assets/index-D8Rf8YEq.css)"
+    ]
+  }
+}
