@@ -11,3 +11,4 @@ frontend/dist/
 # Supabase temp
 supabase/.temp/
 backend/supabase/.temp/
+.vercel
