@@ -17,12 +17,12 @@ def _llm_generate(query: str) -> str:
     prompt = (
         "Eres un experto en literatura. El usuario busca libros con estas características:\n"
         f'"{query}"\n\n'
-        "Escribe en español un párrafo (3-5 oraciones) que describa los TEMAS, ATMÓSFERA y "
-        "ELEMENTOS NARRATIVOS típicos de los libros que coinciden con esa búsqueda. "
-        "No inventes una historia concreta ni uses nombres propios de personajes, "
-        "organizaciones o lugares. Focalizate en qué hace reconocible a ese tipo de libro: "
-        "sus conflictos centrales, el tono, el contexto y los temas filosóficos o sociales "
-        "que suele explorar. Escribe solo el párrafo, sin título ni etiquetas."
+        "Escribe en español 2 oraciones que describan qué tipo de libros son estos: "
+        "su GÉNERO, su ÉPOCA o CONTEXTO, y qué OCURRE en ellos (trama central, tipo de protagonista, conflicto). "
+        "No describas atmósfera, sensaciones ni adjetivos literarios. "
+        "No uses nombres propios inventados. "
+        "Sé específico y directo, como si escribieras una ficha de catálogo de biblioteca. "
+        "Escribe solo las 2 oraciones, sin título ni etiquetas."
     )
     response = requests.post(
         f"{OLLAMA_CLOUD_URL}/v1/chat/completions",
