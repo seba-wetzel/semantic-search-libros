@@ -9,14 +9,14 @@ defineProps({
 const expanded = ref(false)
 
 function similarityColor(score) {
-  if (score >= 0.85) return '#56cfb2'
-  if (score >= 0.70) return '#7c6ff7'
+  if (score >= 0.75) return '#56cfb2'
+  if (score >= 0.60) return '#7c6ff7'
   return '#8888a8'
 }
 
 function similarityLabel(score) {
-  if (score >= 0.85) return 'Muy relevante'
-  if (score >= 0.70) return 'Relevante'
+  if (score >= 0.75) return 'Muy relevante'
+  if (score >= 0.60) return 'Relevante'
   return 'Relacionado'
 }
 
