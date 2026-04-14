@@ -41,9 +41,11 @@ def csrf_token():
 def search(q: str = Query(..., min_length=2), top: int = Query(5, ge=1, le=20)):
     """Búsqueda híbrida: HyDE (semántica) + full-text con Reciprocal Rank Fusion."""
     try:
-        # HyDE: generar descripción hipotética en español para embedding más rico
+        # HyDE: generar descripción hipotética en español para embedding más rico.
+        # Se concatena con la query original para que términos específicos del usuario
+        # (nombres, lugares, épocas) no se pierdan si el LLM los parafrasea.
         hyde_description = generate_hyde_description(q)
-        query_vector = embed(hyde_description)
+        query_vector = embed(f"{q}\n\n{hyde_description}")
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Error generando búsqueda: {e}")
 
