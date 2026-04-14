@@ -53,13 +53,19 @@ def main():
 
     for i, (query, limit) in enumerate(QUERIES, 1):
         print(f"\n[{i}/{len(QUERIES)}] Query: '{query}' (limit {limit})")
-        try:
-            result = seed(query, limit)
-            total_inserted += result["inserted"]
-            total_skipped  += result["skipped"]
-            print(f"  → insertados: {result['inserted']}  saltados: {result['skipped']}  encontrados: {result['total_found']}")
-        except Exception as e:
-            print(f"  ERROR: {e}")
+        for attempt in range(3):
+            try:
+                result = seed(query, limit)
+                total_inserted += result["inserted"]
+                total_skipped  += result["skipped"]
+                print(f"  → insertados: {result['inserted']}  saltados: {result['skipped']}  encontrados: {result['total_found']}")
+                break
+            except Exception as e:
+                print(f"  intento {attempt+1}/3 falló: {e}")
+                if attempt < 2:
+                    time.sleep(10)
+                else:
+                    print(f"  SKIP: {query}")
 
         # Pausa entre queries para no saturar OpenLibrary
         if i < len(QUERIES):
