@@ -7,6 +7,7 @@ from supabase import create_client
 from src.config import SUPABASE_URL, SUPABASE_KEY
 from src.embeddings import embed
 from src.translate import translate_to_spanish
+from src.hyde import generate_hyde_description
 from src.seed import seed as run_seed
 from src.csrf import generate_csrf_token, set_csrf_cookie, verify_csrf, CSRF_HEADER
 
@@ -38,15 +39,20 @@ def csrf_token():
 
 @app.get("/search")
 def search(q: str = Query(..., min_length=2), top: int = Query(5, ge=1, le=20)):
-    """Búsqueda semántica de libros por descripción."""
+    """Búsqueda híbrida: HyDE (semántica) + full-text con Reciprocal Rank Fusion."""
     try:
-        query_es = translate_to_spanish(q)
-        query_vector = embed(query_es)
+        # HyDE: generar descripción hipotética en español para embedding más rico
+        hyde_description = generate_hyde_description(q)
+        query_vector = embed(hyde_description)
     except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Error generando embedding: {e}")
+        raise HTTPException(status_code=503, detail=f"Error generando búsqueda: {e}")
 
     db = get_db()
-    result = db.rpc("search_books", {"query_embedding": query_vector, "match_count": top}).execute()
+    result = db.rpc("search_books_hybrid", {
+        "query_embedding": query_vector,
+        "query_text": q,
+        "match_count": top,
+    }).execute()
     return {"query": q, "results": result.data}
 
 
