@@ -15,8 +15,9 @@ export async function searchBooks(query, top = 5) {
   return res.json()
 }
 
-export async function listBooks(limit = 20, offset = 0) {
-  const res = await fetch(`${BASE}/books?limit=${limit}&offset=${offset}`)
+export async function listBooks({ limit = 20, offset = 0, sortBy = 'created_at', order = 'desc' } = {}) {
+  const params = new URLSearchParams({ limit, offset, sort_by: sortBy, order })
+  const res = await fetch(`${BASE}/books?${params}`)
   if (!res.ok) throw new Error(`Error ${res.status}`)
   return res.json()
 }

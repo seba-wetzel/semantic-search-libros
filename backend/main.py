@@ -50,14 +50,26 @@ def search(q: str = Query(..., min_length=2), top: int = Query(5, ge=1, le=20)):
     return {"query": q, "results": result.data}
 
 
+_SORTABLE_FIELDS = {"title", "author", "year", "created_at"}
+
 @app.get("/books")
-def list_books(limit: int = Query(20, ge=1, le=100), offset: int = 0):
-    """Lista todos los libros en la base de datos."""
+def list_books(
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    sort_by: str = Query("created_at"),
+    order: str = Query("desc"),
+):
+    """Lista todos los libros en la base de datos, con orden y paginación."""
+    if sort_by not in _SORTABLE_FIELDS:
+        raise HTTPException(status_code=400, detail=f"Campo inválido. Opciones: {', '.join(_SORTABLE_FIELDS)}")
+    if order not in {"asc", "desc"}:
+        raise HTTPException(status_code=400, detail="Orden inválido. Usar 'asc' o 'desc'.")
+
     db = get_db()
     result = (
         db.table("books")
         .select("id, ol_key, title, author, year, cover_url, description, description_es")
-        .order("created_at", desc=True)
+        .order(sort_by, desc=(order == "desc"))
         .range(offset, offset + limit - 1)
         .execute()
     )

@@ -39,12 +39,12 @@ function similarityLabel(score) {
         <span class="rank">#{{ rank }}</span>
         <span class="badge" :style="{ color: similarityColor(book.similarity) }">
           {{ similarityLabel(book.similarity) }}
-          ┬╖ {{ (book.similarity * 100).toFixed(1) }}%
+          · {{ (book.similarity * 100).toFixed(1) }}%
         </span>
       </div>
 
       <h3 class="title">{{ book.title }}</h3>
-      <p class="author">{{ book.author }} <span v-if="book.year">┬╖ {{ book.year }}</span></p>
+      <p class="author">{{ book.author }} <span v-if="book.year">· {{ book.year }}</span></p>
       <p class="description">{{ book.description_es || book.description }}</p>
     </div>
   </article>

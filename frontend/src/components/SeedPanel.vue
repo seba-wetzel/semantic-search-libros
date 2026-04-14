@@ -33,7 +33,7 @@ function pollStatus() {
       clearInterval(pollInterval)
       loading.value = false
       if (s.last_result) {
-        message.value = `Γ£ô Insertados: ${s.last_result.inserted} ┬╖ Saltados: ${s.last_result.skipped}`
+        message.value = `✔ Insertados: ${s.last_result.inserted} · Saltados: ${s.last_result.skipped}`
       }
     }
   }, 2000)
@@ -45,22 +45,22 @@ onUnmounted(() => clearInterval(pollInterval))
 <template>
   <div class="seed-panel">
     <h3>Cargar libros</h3>
-    <p class="desc">Busc├í libros en OpenLibrary, gener├í sus embeddings y guardalos en Supabase.</p>
+    <p class="desc">Buscá libros en OpenLibrary, generá sus embeddings y guardalos en Supabase.</p>
 
     <div class="fields">
       <div class="field">
-        <label>B├║squeda en OpenLibrary</label>
-        <input v-model="query" type="text" placeholder="science fiction, classic literatureΓÇª" :disabled="loading" />
+        <label>Búsqueda en OpenLibrary</label>
+        <input v-model="query" type="text" placeholder="science fiction, classic literature…" :disabled="loading" />
       </div>
       <div class="field field-sm">
-        <label>L├¡mite</label>
+        <label>Límite</label>
         <input v-model.number="limit" type="number" min="5" max="100" :disabled="loading" />
       </div>
     </div>
 
     <button @click="startSeed" :disabled="loading">
       <span v-if="loading">
-        <span class="spinner" /> ProcesandoΓÇª
+        <span class="spinner" /> Procesando…
       </span>
       <span v-else>Iniciar seed</span>
     </button>
@@ -69,7 +69,7 @@ onUnmounted(() => clearInterval(pollInterval))
     <p v-if="error" class="msg error">{{ error }}</p>
 
     <div v-if="status?.running" class="running">
-      <span class="spinner dark" /> Generando embeddings en backgroundΓÇª
+      <span class="spinner dark" /> Generando embeddings en background…
     </div>
   </div>
 </template>

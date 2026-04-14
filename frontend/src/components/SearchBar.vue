@@ -24,7 +24,7 @@ function submit() {
       <input
         v-model="query"
         type="text"
-        placeholder="Describ├¡ el libro que busc├ís en lenguaje naturalΓÇª"
+        placeholder="Describí el libro que buscás en lenguaje natural…"
         :disabled="loading"
         autofocus
       />
@@ -33,7 +33,7 @@ function submit() {
         <span v-else class="spinner" />
       </button>
     </div>
-    <p class="hint">Ejemplo: "una historia sobre supervivencia en el espacio" ┬╖ "romance en Par├¡s siglo XIX"</p>
+    <p class="hint">Ejemplo: "una historia sobre supervivencia en el espacio" · "romance en París siglo XIX"</p>
   </form>
 </template>
 

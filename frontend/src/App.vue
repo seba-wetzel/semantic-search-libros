@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import SearchBar from './components/SearchBar.vue'
 import BookCard from './components/BookCard.vue'
+import BookList from './components/BookList.vue'
 import SeedPanel from './components/SeedPanel.vue'
 
 const loading = ref(false)
@@ -9,6 +10,12 @@ const results = ref([])
 const lastQuery = ref('')
 const error = ref('')
 const showSeed = ref(false)
+
+function clearSearch() {
+  results.value = []
+  lastQuery.value = ''
+  error.value = ''
+}
 
 async function handleSearch(query) {
   loading.value = true
@@ -50,42 +57,44 @@ async function handleSearch(query) {
         </div>
       </transition>
 
-      <section class="hero" v-if="!results.length && !loading">
-        <h1>Busc├í libros por <span class="accent">significado</span></h1>
-        <p>No por t├¡tulo ni autor. Describ├¡ de qu├⌐ trata el libro y encontramos los m├ís similares usando IA.</p>
-      </section>
-
       <div class="search-wrap">
-        <SearchBar :loading="loading" @search="handleSearch" />
+        <SearchBar :loading="loading" @search="handleSearch" @clear="clearSearch" />
       </div>
 
-      <div v-if="loading" class="loading-state">
-        <div class="pulse" />
-        <div class="pulse" style="width:60%;opacity:.6" />
-        <div class="pulse" style="width:80%;opacity:.4" />
-      </div>
-
-      <div v-if="error" class="error-msg">{{ error }}</div>
-
-      <section v-if="results.length" class="results">
-        <div class="results-header">
-          <h2>Resultados para <em>"{{ lastQuery }}"</em></h2>
-          <span class="count">{{ results.length }} libros</span>
+      <!-- Resultados de búsqueda -->
+      <template v-if="lastQuery">
+        <div v-if="loading" class="loading-state">
+          <div class="pulse" />
+          <div class="pulse" style="width:60%;opacity:.6" />
+          <div class="pulse" style="width:80%;opacity:.4" />
         </div>
-        <div class="results-list">
-          <BookCard
-            v-for="(book, i) in results"
-            :key="book.id"
-            :book="book"
-            :rank="i + 1"
-          />
-        </div>
-      </section>
 
-      <div v-if="!loading && !results.length && lastQuery" class="empty">
-        <p>No se encontraron libros para "{{ lastQuery }}".</p>
-        <p class="hint">┬┐Cargaste libros en la base? Us├í el bot├│n "Cargar libros" arriba.</p>
-      </div>
+        <div v-if="error" class="error-msg">{{ error }}</div>
+
+        <section v-if="results.length" class="results">
+          <div class="results-header">
+            <h2>Resultados para <em>"{{ lastQuery }}"</em></h2>
+            <span class="count">{{ results.length }} libros</span>
+            <button class="clear-btn" @click="clearSearch">✕ Limpiar</button>
+          </div>
+          <div class="results-list">
+            <BookCard
+              v-for="(book, i) in results"
+              :key="book.id"
+              :book="book"
+              :rank="i + 1"
+            />
+          </div>
+        </section>
+
+        <div v-if="!loading && !results.length" class="empty">
+          <p>No se encontraron libros para "{{ lastQuery }}".</p>
+          <p class="hint">¿Cargaste libros en la base? Usá el botón "Cargar libros" arriba.</p>
+        </div>
+      </template>
+
+      <!-- Lista por defecto -->
+      <BookList v-else />
     </main>
   </div>
 </template>
@@ -209,6 +218,19 @@ async function handleSearch(query) {
 .count { font-size: 0.8rem; color: var(--text-muted); background: var(--surface); padding: 2px 10px; border-radius: 20px; border: 1px solid var(--border); }
 
 .results-list { display: flex; flex-direction: column; gap: 14px; }
+
+.clear-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.clear-btn:hover { border-color: var(--danger); color: var(--danger); }
 
 .empty {
   text-align: center;
