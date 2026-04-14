@@ -47,10 +47,10 @@ def generate_hyde_description(query: str) -> str:
     db = _get_db()
 
     # Intentar leer del cache
-    cached = db.table("hyde_cache").select("hyde_description").eq("query_normalized", key).maybe_single().execute()
+    cached = db.table("hyde_cache").select("hyde_description").eq("query_normalized", key).limit(1).execute()
     if cached.data:
         print(f"  [hyde cache hit] '{key}'")
-        return cached.data["hyde_description"]
+        return cached.data[0]["hyde_description"]
 
     # Generar con LLM y guardar en cache
     print(f"  [hyde generating] '{key}'")
