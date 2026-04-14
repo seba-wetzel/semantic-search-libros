@@ -11,11 +11,14 @@ def generate_hyde_description(query: str) -> str:
     produce un vector mucho más similar a las descripciones reales en la DB.
     """
     prompt = (
-        "Eres un experto en literatura. El usuario busca un libro con estas características:\n"
+        "Eres un experto en literatura. El usuario busca libros con estas características:\n"
         f'"{query}"\n\n'
-        "Escribe en español una sinopsis detallada (4-6 oraciones) de un libro ficticio que "
-        "coincida perfectamente con esa búsqueda. "
-        "Escribe solo la sinopsis, sin título, sin autor, sin comillas, sin etiquetas."
+        "Escribe en español un párrafo (3-5 oraciones) que describa los TEMAS, ATMÓSFERA y "
+        "ELEMENTOS NARRATIVOS típicos de los libros que coinciden con esa búsqueda. "
+        "No inventes una historia concreta ni uses nombres propios de personajes, "
+        "organizaciones o lugares. Focalizate en qué hace reconocible a ese tipo de libro: "
+        "sus conflictos centrales, el tono, el contexto y los temas filosóficos o sociales "
+        "que suele explorar. Escribe solo el párrafo, sin título ni etiquetas."
     )
     response = requests.post(
         f"{OLLAMA_CLOUD_URL}/v1/chat/completions",
