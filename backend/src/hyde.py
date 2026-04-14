@@ -1,15 +1,19 @@
+import re
 import requests
-from src.config import OLLAMA_CLOUD_URL, OLLAMA_API_KEY, TRANSLATE_MODEL
+from supabase import create_client
+from src.config import OLLAMA_CLOUD_URL, OLLAMA_API_KEY, TRANSLATE_MODEL, SUPABASE_URL, SUPABASE_KEY
 
 
-def generate_hyde_description(query: str) -> str:
-    """
-    HyDE — Hypothetical Document Embeddings.
+def _normalize(query: str) -> str:
+    """Normaliza la query para usarla como cache key."""
+    return re.sub(r'\s+', ' ', query.strip().lower())
 
-    En vez de embeddear la query directamente (señal débil), usamos el LLM
-    para generar una sinopsis ficticia del libro ideal. Embeddear ese texto
-    produce un vector mucho más similar a las descripciones reales en la DB.
-    """
+
+def _get_db():
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+def _llm_generate(query: str) -> str:
     prompt = (
         "Eres un experto en literatura. El usuario busca libros con estas características:\n"
         f'"{query}"\n\n'
@@ -32,3 +36,28 @@ def generate_hyde_description(query: str) -> str:
     )
     response.raise_for_status()
     return response.json()["choices"][0]["message"]["content"].strip()
+
+
+def generate_hyde_description(query: str) -> str:
+    """
+    HyDE — Hypothetical Document Embeddings.
+    Usa la DB como cache: si la query ya fue procesada, devuelve el resultado guardado.
+    """
+    key = _normalize(query)
+    db = _get_db()
+
+    # Intentar leer del cache
+    cached = db.table("hyde_cache").select("hyde_description").eq("query_normalized", key).maybe_single().execute()
+    if cached.data:
+        print(f"  [hyde cache hit] '{key}'")
+        return cached.data["hyde_description"]
+
+    # Generar con LLM y guardar en cache
+    print(f"  [hyde generating] '{key}'")
+    description = _llm_generate(query)
+    db.table("hyde_cache").upsert({
+        "query_normalized": key,
+        "hyde_description": description,
+    }).execute()
+
+    return description

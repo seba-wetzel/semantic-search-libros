@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import SearchBar from './components/SearchBar.vue'
 import BookCard from './components/BookCard.vue'
 import BookList from './components/BookList.vue'
@@ -12,11 +12,22 @@ const hydeDescription = ref('')
 const error = ref('')
 const showSeed = ref(false)
 
+function setUrlQuery(query) {
+  const url = new URL(window.location)
+  if (query) {
+    url.searchParams.set('q', query)
+  } else {
+    url.searchParams.delete('q')
+  }
+  history.pushState({}, '', url)
+}
+
 function clearSearch() {
   results.value = []
   lastQuery.value = ''
   hydeDescription.value = ''
   error.value = ''
+  setUrlQuery('')
 }
 
 async function handleSearch(query) {
@@ -25,6 +36,7 @@ async function handleSearch(query) {
   results.value = []
   hydeDescription.value = ''
   lastQuery.value = query
+  setUrlQuery(query)
   try {
     const data = await (await fetch(`/api/search?q=${encodeURIComponent(query)}&top=8`)).json()
     results.value = data.results ?? []
@@ -35,6 +47,11 @@ async function handleSearch(query) {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  const q = new URLSearchParams(window.location.search).get('q')
+  if (q) handleSearch(q)
+})
 </script>
 
 <template>
@@ -62,7 +79,7 @@ async function handleSearch(query) {
       </transition>
 
       <div class="search-wrap">
-        <SearchBar :loading="loading" @search="handleSearch" @clear="clearSearch" />
+        <SearchBar :loading="loading" :initialQuery="lastQuery" @search="handleSearch" @clear="clearSearch" />
       </div>
 
       <!-- Resultados de búsqueda -->

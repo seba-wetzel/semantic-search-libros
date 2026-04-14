@@ -1,12 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   loading: Boolean,
+  initialQuery: { type: String, default: '' },
 })
 const emit = defineEmits(['search'])
 
-const query = ref('')
+const query = ref(props.initialQuery)
+
+watch(() => props.initialQuery, (val) => { query.value = val })
 
 function submit() {
   const q = query.value.trim()
