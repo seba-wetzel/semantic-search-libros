@@ -197,6 +197,108 @@ QUERIES = [
     ("survival horror wilderness isolation",      20),
     ("horror anthology short stories",            25),
     ("southern gothic horror fiction",            20),
+
+    # --- Autores clásicos sci-fi ---
+    ("isaac asimov foundation robot",             35),
+    ("philip k dick science fiction",             35),
+    ("ray bradbury science fiction",              30),
+    ("ursula le guin science fiction fantasy",    30),
+    ("arthur c clarke science fiction",           30),
+    ("frank herbert dune science fiction",        25),
+    ("william gibson cyberpunk fiction",          25),
+    ("neal stephenson science fiction",           25),
+    ("octavia butler science fiction",            25),
+    ("china mieville weird fiction",              20),
+
+    # --- Autores clásicos terror/thriller ---
+    ("edgar allan poe horror mystery",            25),
+    ("hp lovecraft cosmic horror",                25),
+    ("shirley jackson horror gothic",             20),
+    ("dean koontz horror thriller",               25),
+    ("peter straub horror fiction",               20),
+
+    # --- YA (Young Adult) ---
+    ("young adult dystopian fiction",             35),
+    ("young adult fantasy magic school",          30),
+    ("young adult science fiction",               25),
+    ("young adult horror coming of age",          20),
+    ("young adult mystery thriller",              25),
+    ("young adult historical fiction",            20),
+
+    # --- Ficción especulativa y géneros cruzados ---
+    ("science fiction horror alien creature",     25),
+    ("fantasy mystery detective magic",           25),
+    ("romantic thriller suspense love story",     25),
+    ("science fantasy space magic",               20),
+    ("horror comedy dark humor fiction",          20),
+    ("dieselpunk alternate history war",          20),
+    ("atompunk atomic age retro future",          15),
+    ("hopepunk optimistic resistance fiction",    15),
+    ("climate fiction cli-fi near future",        25),
+    ("afrofuturism science fiction",              20),
+    ("indigenous futurism native science fiction",15),
+
+    # --- Literatura mundial ---
+    ("african literature fiction novel",          25),
+    ("west african nigerian literature",          20),
+    ("south african apartheid fiction",           20),
+    ("middle eastern arabic literature",          20),
+    ("indian subcontinent literature fiction",    25),
+    ("scandinavian literature nordic fiction",    25),
+    ("german literature classic novel",           25),
+    ("french literature classic novel",           25),
+    ("italian literature fiction novel",          20),
+    ("eastern european literature fiction",       20),
+    ("australian literature fiction",             20),
+    ("canadian literature fiction novel",         20),
+
+    # --- Más thriller y misterio ---
+    ("revenge thriller justice fiction",          25),
+    ("ghost story supernatural mystery",          25),
+    ("heist ocean eleven crime fiction",          20),
+    ("cat mouse game thriller obsession",         25),
+    ("cold case unsolved crime fiction",          25),
+    ("witness protection crime thriller",         20),
+    ("vigilante justice crime fiction",           20),
+    ("undercover agent infiltration thriller",    20),
+
+    # --- Más fantasía ---
+    ("secondary world fantasy no magic system",  20),
+    ("portal fantasy chosen one adventure",      25),
+    ("dark fantasy morally grey protagonist",     25),
+    ("romantic fantasy fae otherworld",           20),
+    ("historical fantasy magic realism europe",   20),
+    ("space fantasy science fantasy hybrid",      20),
+    ("necromancer undead fantasy novel",          20),
+    ("heist fantasy thieves guild",               20),
+
+    # --- Más terror ---
+    ("eco horror nature revenge fiction",         20),
+    ("apocalyptic religious horror fiction",      20),
+    ("parasite infection body horror",            15),
+    ("small town secret dark mystery horror",     20),
+    ("ritual sacrifice occult horror fiction",    15),
+
+    # --- Más ciencia ficción ---
+    ("first law magic system fantasy",            20),
+    ("science fiction short story anthology",     25),
+    ("hard sf physics spaceship exploration",     25),
+    ("science fiction economics society",         20),
+    ("post human transhuman science fiction",     20),
+    ("science fiction religion church future",    15),
+    ("science fiction music art creativity",      15),
+    ("science fiction aging death immortality",   20),
+    ("science fiction memory identity self",      20),
+
+    # --- Más literatura latinoamericana ---
+    ("juan rulfo pedro paramo mexico",            20),
+    ("ernesto sabato argentina fiction",          20),
+    ("alejo carpentier cuba fiction",             20),
+    ("alfredo bryce echenique peru fiction",      15),
+    ("manuel puig argentina fiction",             15),
+    ("literatura fantástica argentina",           25),
+    ("novela negra latinoamericana crimen",       25),
+    ("literatura chicana frontera fiction",       15),
 ]
 
 
