@@ -89,7 +89,7 @@ def search_books(query: str, limit: int = 20) -> list[dict]:
     resp = _get(
         f"{BASE_URL}/search.json",
         params={"q": query, "limit": limit, "fields": _SEARCH_FIELDS},
-        timeout=20,
+        timeout=30,
     )
     resp.raise_for_status()
 
