@@ -8,7 +8,6 @@ Este script detecta esas descripciones y las reemplaza con una sinopsis generada
 LLM usando los metadatos confiables del libro (título, autor, año, subjects).
 También regenera el embedding a partir de la sinopsis nueva.
 """
-import re
 import sys
 import time
 import pathlib
@@ -16,70 +15,9 @@ import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
 from supabase import create_client
-from src.config import SUPABASE_URL, SUPABASE_KEY, OLLAMA_CLOUD_URL, OLLAMA_API_KEY, TRANSLATE_MODEL
+from src.config import SUPABASE_URL, SUPABASE_KEY
 from src.embeddings import embed
-import requests
-
-# ── Heurísticas para detectar descripciones pobres ──────────────────────────
-
-MIN_LENGTH = 200  # menos de esto casi nunca es un resumen útil
-
-BAD_PATTERNS = [
-    r"first published",
-    r"originally published",
-    r"published by",
-    r"bantam book",
-    r"includes index",
-    r"a novel by",
-    r"^\s*\d{4}\s*$",          # solo un año
-    r"^[^.]{0,60}$",           # una sola frase muy corta sin punto
-    r"edition\b",
-    r"hardcover|paperback|softcover",
-    r"isbn",
-    r"all rights reserved",
-    r"copyright",
-    r"translated (from|by)",
-]
-
-BAD_RE = re.compile("|".join(BAD_PATTERNS), re.IGNORECASE)
-
-
-def is_poor(description: str) -> bool:
-    if not description or len(description.strip()) < MIN_LENGTH:
-        return True
-    if BAD_RE.search(description):
-        return True
-    return False
-
-
-# ── Generación de sinopsis con LLM ──────────────────────────────────────────
-
-def generate_synopsis(title: str, author: str, year: int | None, subjects: list[str]) -> str:
-    subjects_str = ", ".join(subjects[:8]) if subjects else "no disponibles"
-    year_str = str(year) if year else "desconocido"
-
-    prompt = (
-        f"Escribe en español un resumen del argumento del libro '{title}' "
-        f"de {author} (publicado en {year_str}). "
-        f"Temas relacionados: {subjects_str}. "
-        "Describe en 3-4 oraciones quiénes son los protagonistas, qué problema o conflicto "
-        "enfrentan y en qué contexto ocurre la historia. "
-        "Sé concreto y no uses frases genéricas. "
-        "Escribe solo el resumen, sin título ni encabezado."
-    )
-
-    response = requests.post(
-        f"{OLLAMA_CLOUD_URL}/v1/chat/completions",
-        headers={"Authorization": f"Bearer {OLLAMA_API_KEY}"},
-        json={
-            "model": TRANSLATE_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.3,
-        },
-        timeout=60,
-    )
-    response.raise_for_status()
-    return response.json()["choices"][0]["message"]["content"].strip()
+from src.description import is_poor, generate_synopsis
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────

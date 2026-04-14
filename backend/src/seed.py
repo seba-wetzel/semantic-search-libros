@@ -4,7 +4,7 @@ from supabase import create_client
 from src.config import SUPABASE_URL, SUPABASE_KEY
 from src.openlibrary import search_books
 from src.embeddings import embed
-from src.translate import translate_to_spanish
+from src.description import get_description_es
 
 
 def _with_retry(fn, retries=3, delay=5):
@@ -34,10 +34,13 @@ def seed(query: str, limit: int) -> dict:
             skipped += 1
             continue
 
-        description_en = book["description"]
-
-        print(f"  Traduciendo: {book['title'][:60]}...")
-        description_es = _with_retry(lambda d=description_en: translate_to_spanish(d))
+        subjects = (book.get("extras") or {}).get("subjects", [])
+        description_es, generated = _with_retry(lambda: get_description_es(
+            book["description"], book["title"], book.get("author", ""),
+            book.get("year"), subjects,
+        ))
+        label = "Generando sinopsis" if generated else "Traduciendo"
+        print(f"  {label}: {book['title'][:60]}...")
 
         print(f"  Embeddeando...")
         vector = _with_retry(lambda d=description_es: embed(d))
