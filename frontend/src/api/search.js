@@ -6,13 +6,13 @@ async function getCsrfToken() {
   return data.csrf_token
 }
 
-export async function searchBooks(query, top = 5) {
+export async function searchBooks(query, top = 8) {
   const res = await fetch(`${BASE}/search?q=${encodeURIComponent(query)}&top=${top}`)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error(err.detail || `Error ${res.status}`)
   }
-  return res.json()
+  return res.json() // { query, hyde_description, results }
 }
 
 export async function listBooks({ limit = 20, offset = 0, sortBy = 'created_at', order = 'desc' } = {}) {

@@ -53,7 +53,7 @@ def search(q: str = Query(..., min_length=2), top: int = Query(5, ge=1, le=20)):
         "query_text": q,
         "match_count": top,
     }).execute()
-    return {"query": q, "results": result.data}
+    return {"query": q, "hyde_description": hyde_description, "results": result.data}
 
 
 _SORTABLE_FIELDS = {"title", "author", "year", "created_at"}

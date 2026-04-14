@@ -8,12 +8,14 @@ import SeedPanel from './components/SeedPanel.vue'
 const loading = ref(false)
 const results = ref([])
 const lastQuery = ref('')
+const hydeDescription = ref('')
 const error = ref('')
 const showSeed = ref(false)
 
 function clearSearch() {
   results.value = []
   lastQuery.value = ''
+  hydeDescription.value = ''
   error.value = ''
 }
 
@@ -21,10 +23,12 @@ async function handleSearch(query) {
   loading.value = true
   error.value = ''
   results.value = []
+  hydeDescription.value = ''
   lastQuery.value = query
   try {
-    const { results: books } = await (await fetch(`/api/search?q=${encodeURIComponent(query)}&top=8`)).json()
-    results.value = books ?? []
+    const data = await (await fetch(`/api/search?q=${encodeURIComponent(query)}&top=8`)).json()
+    results.value = data.results ?? []
+    hydeDescription.value = data.hyde_description ?? ''
   } catch (e) {
     error.value = 'Error al conectar con el servidor.'
   } finally {
@@ -76,6 +80,10 @@ async function handleSearch(query) {
             <h2>Resultados para <em>"{{ lastQuery }}"</em></h2>
             <span class="count">{{ results.length }} libros</span>
             <button class="clear-btn" @click="clearSearch">✕ Limpiar</button>
+          </div>
+          <div v-if="hydeDescription" class="hyde-description">
+            <span class="hyde-label">Búsqueda interpretada como</span>
+            <p>{{ hydeDescription }}</p>
           </div>
           <div class="results-list">
             <BookCard
@@ -218,6 +226,31 @@ async function handleSearch(query) {
 .count { font-size: 0.8rem; color: var(--text-muted); background: var(--surface); padding: 2px 10px; border-radius: 20px; border: 1px solid var(--border); }
 
 .results-list { display: flex; flex-direction: column; gap: 14px; }
+
+.hyde-description {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.hyde-label {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.hyde-description p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
 
 .clear-btn {
   margin-left: auto;

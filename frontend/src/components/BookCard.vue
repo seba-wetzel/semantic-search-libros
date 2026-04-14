@@ -50,6 +50,8 @@ function langLabel(code) {
           {{ similarityLabel(book.similarity) }}
           · {{ (book.similarity * 100).toFixed(1) }}%
         </span>
+        <span v-if="book.match_type === 'fulltext'" class="match-tag fulltext">texto exacto</span>
+        <span v-else-if="book.match_type === 'hybrid'" class="match-tag hybrid">semántico + texto</span>
         <span class="expand-hint">{{ expanded ? '▲ menos' : '▼ más' }}</span>
       </div>
 
@@ -160,6 +162,24 @@ function langLabel(code) {
 .badge {
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.match-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+.match-tag.fulltext {
+  background: rgba(124, 111, 247, 0.12);
+  color: #7c6ff7;
+  border: 1px solid rgba(124, 111, 247, 0.3);
+}
+.match-tag.hybrid {
+  background: rgba(86, 207, 178, 0.1);
+  color: var(--accent);
+  border: 1px solid rgba(86, 207, 178, 0.25);
 }
 
 .expand-hint {
