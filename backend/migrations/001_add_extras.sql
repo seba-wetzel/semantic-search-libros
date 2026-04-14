@@ -1,27 +1,10 @@
--- 1. Habilitar pgvector
-create extension if not exists vector;
+-- Migration 001: add extras jsonb column to books
+alter table books add column if not exists extras jsonb;
 
--- 2. Tabla de libros
-create table if not exists books (
-  id          bigint primary key generated always as identity,
-  ol_key      text unique not null,
-  title       text not null,
-  author      text,
-  year        int,
-  description text not null,
-  description_es text,
-  cover_url   text,
-  extras      jsonb,
-  embedding   vector(1024),
-  created_at  timestamptz default now()
-);
+-- Drop old function to allow changing return type
+drop function if exists search_books(vector, integer);
 
--- 3. Índice para búsqueda coseno
-create index if not exists books_embedding_idx
-  on books using ivfflat (embedding vector_cosine_ops)
-  with (lists = 100);
-
--- 4. Función de búsqueda semántica
+-- Update search_books function to return extras
 create or replace function search_books(
   query_embedding vector(1024),
   match_count     int default 5

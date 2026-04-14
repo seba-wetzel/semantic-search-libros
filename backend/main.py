@@ -68,7 +68,7 @@ def list_books(
     db = get_db()
     result = (
         db.table("books")
-        .select("id, ol_key, title, author, year, cover_url, description, description_es")
+        .select("id, ol_key, title, author, year, cover_url, description, description_es, extras")
         .order(sort_by, desc=(order == "desc"))
         .range(offset, offset + limit - 1)
         .execute()

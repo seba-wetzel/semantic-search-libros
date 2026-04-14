@@ -43,9 +43,15 @@ def seed(query: str, limit: int) -> dict:
         vector = _with_retry(lambda d=description_es: embed(d))
 
         db.table("books").insert({
-            **book,
+            "ol_key":         book["ol_key"],
+            "title":          book["title"],
+            "author":         book["author"],
+            "year":           book["year"],
+            "description":    book["description"],
             "description_es": description_es,
-            "embedding": vector,
+            "cover_url":      book["cover_url"],
+            "extras":         book.get("extras"),
+            "embedding":      vector,
         }).execute()
         inserted += 1
 

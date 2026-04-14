@@ -1,8 +1,12 @@
 <script setup>
+import { ref } from 'vue'
+
 defineProps({
   book: Object,
   rank: Number,
 })
+
+const expanded = ref(false)
 
 function similarityColor(score) {
   if (score >= 0.85) return '#56cfb2'
@@ -15,10 +19,15 @@ function similarityLabel(score) {
   if (score >= 0.70) return 'Relevante'
   return 'Relacionado'
 }
+
+function langLabel(code) {
+  const map = { eng: 'Inglés', spa: 'Español', fre: 'Francés', ger: 'Alemán', ita: 'Italiano', por: 'Portugués' }
+  return map[code] ?? code.toUpperCase()
+}
 </script>
 
 <template>
-  <article class="card">
+  <article class="card" :class="{ expanded }" @click="expanded = !expanded">
     <div class="card-cover">
       <img
         v-if="book.cover_url"
@@ -37,15 +46,47 @@ function similarityLabel(score) {
     <div class="card-body">
       <div class="card-meta">
         <span class="rank">#{{ rank }}</span>
-        <span class="badge" :style="{ color: similarityColor(book.similarity) }">
+        <span v-if="book.similarity != null" class="badge" :style="{ color: similarityColor(book.similarity) }">
           {{ similarityLabel(book.similarity) }}
           · {{ (book.similarity * 100).toFixed(1) }}%
         </span>
+        <span class="expand-hint">{{ expanded ? '▲ menos' : '▼ más' }}</span>
       </div>
 
       <h3 class="title">{{ book.title }}</h3>
       <p class="author">{{ book.author }} <span v-if="book.year">· {{ book.year }}</span></p>
-      <p class="description">{{ book.description_es || book.description }}</p>
+
+      <!-- Descripción: truncada o completa -->
+      <p class="description" :class="{ full: expanded }">
+        {{ book.description_es || book.description }}
+      </p>
+
+      <!-- Extras: solo cuando está expandido -->
+      <transition name="extras">
+        <div v-if="expanded && book.extras" class="extras" @click.stop>
+          <div class="extras-grid">
+            <div v-if="book.extras.pages" class="extra-item">
+              <span class="extra-label">Páginas</span>
+              <span class="extra-value">{{ book.extras.pages }}</span>
+            </div>
+            <div v-if="book.extras.rating" class="extra-item">
+              <span class="extra-label">Rating</span>
+              <span class="extra-value">★ {{ book.extras.rating }} <span class="rating-count">({{ book.extras.rating_count?.toLocaleString() }})</span></span>
+            </div>
+            <div v-if="book.extras.publishers?.length" class="extra-item">
+              <span class="extra-label">Editorial</span>
+              <span class="extra-value">{{ book.extras.publishers[0] }}</span>
+            </div>
+            <div v-if="book.extras.languages?.length" class="extra-item">
+              <span class="extra-label">Idiomas</span>
+              <span class="extra-value">{{ book.extras.languages.map(langLabel).join(', ') }}</span>
+            </div>
+          </div>
+          <div v-if="book.extras.subjects?.length" class="subjects">
+            <span v-for="s in book.extras.subjects" :key="s" class="subject-tag">{{ s }}</span>
+          </div>
+        </div>
+      </transition>
     </div>
   </article>
 </template>
@@ -59,11 +100,17 @@ function similarityLabel(score) {
   border-radius: var(--radius);
   padding: 20px;
   transition: border-color var(--transition), transform var(--transition);
+  cursor: pointer;
+  user-select: none;
 }
 
 .card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+
+.card.expanded {
+  border-color: var(--accent);
 }
 
 .card-cover {
@@ -115,6 +162,12 @@ function similarityLabel(score) {
   font-weight: 600;
 }
 
+.expand-hint {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .title {
   font-size: 1.05rem;
   font-weight: 700;
@@ -139,4 +192,68 @@ function similarityLabel(score) {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.description.full {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+/* Extras */
+.extras {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.extras-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.extra-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.extra-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.extra-value {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.rating-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.subject-tag {
+  font-size: 0.72rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.extras-enter-active { transition: all 0.2s ease; }
+.extras-enter-from { opacity: 0; transform: translateY(-6px); }
 </style>
